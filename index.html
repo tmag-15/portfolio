@@ -208,10 +208,14 @@ footer a:hover{color:var(--signal);border-color:var(--signal)}
       <span><b>workflow</b> wf-e0040fb3 stage=qa coverage=84% gate=pass</span>
       <span><b>selfheal</b> incident=KeyError diagnose=read-only sandbox=/tmp gate=ruff+pytest</span>
       <span><b>pr_opened</b> repo=scoper branch=wf-e0040fb3 files=12</span>
+      <span><b>shot_event</b> ball_speed=163.2mph launch=11.4° backspin=2842rpm transport=ws</span>
+      <span><b>failsafe_triggered</b> drone=sim-01 reason=heartbeat_timeout action=return_home</span>
       <span><b>llm_call</b> backend=anthropic model=opus cost_usd=0.0139 tokens_in=1474 tokens_out=263</span>
       <span><b>workflow</b> wf-e0040fb3 stage=qa coverage=84% gate=pass</span>
       <span><b>selfheal</b> incident=KeyError diagnose=read-only sandbox=/tmp gate=ruff+pytest</span>
       <span><b>pr_opened</b> repo=scoper branch=wf-e0040fb3 files=12</span>
+      <span><b>shot_event</b> ball_speed=163.2mph launch=11.4° backspin=2842rpm transport=ws</span>
+      <span><b>failsafe_triggered</b> drone=sim-01 reason=heartbeat_timeout action=return_home</span>
     </div>
   </div>
 </header>
@@ -324,6 +328,85 @@ footer a:hover{color:var(--signal);border-color:var(--signal)}
         <span class="chip">Next.js</span><span class="chip">Supabase</span><span class="chip">Hardhat / ERC-3643</span><span class="chip">Privy</span>
       </div>
       <p class="note rv">Designed architecture — in development. Nothing here is live yet.</p>
+    </div>
+  </section>
+
+  <!-- DRONE AUTONOMY -->
+  <section class="proj" id="drones">
+    <span class="num">05 / STEALTH</span>
+    <div class="wrap">
+      <p class="status rv"><span class="dot a"></span>drone platform — in development · first milestone shipped, sim-verified</p>
+      <h2 class="rv">Drone<br>Autonomy</h2>
+      <p class="lede rv">A safety-critical platform for autonomous drone fleets — built simulation-first, so the entire system runs end to end before a single propeller spins.</p>
+      <p class="body rv">TypeScript services and Python drone agents meet over MQTT, and the simulator speaks the exact message contracts real hardware will — the server never knows it's flying a fake. A deterministic risk engine fuses eight weighted sensor signals into a 0–100 score and a bounded set of actions; a ten-state lifecycle FSM and on-drone failsafes handle disconnects, geofence breaches, and low battery with no server round-trip; every command is written to an append-only event store before it executes. Milestone one — a five-minute automated scenario running end to end with zero errors — is green, and a 41-finding code audit has been driven to zero.</p>
+
+      <div class="stats rv">
+        <div class="stat"><b>349</b><span>tests · 7 suites</span></div>
+        <div class="stat"><b>10</b><span>lifecycle states</span></div>
+        <div class="stat"><b>~9k</b><span>ts + python loc</span></div>
+        <div class="stat"><b>0</b><span>llms in the flight loop</span></div>
+      </div>
+
+      <div class="arch rv">
+        <div class="card hotc">
+          <h4>Deterministic Risk Engine</h4>
+          <ul>
+            <li>8 weighted signals → 0–100</li>
+            <li class="dim">vision detections advisory only</li>
+            <li>versioned YAML config</li>
+            <li class="dim">tuned by replaying stored events</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>On-Drone Failsafes</h4>
+          <ul>
+            <li>disconnect → hover → return home</li>
+            <li class="dim">geofence breach → immediate return</li>
+            <li>runs without the server</li>
+            <li class="dim">emergency always ends on the ground</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Sim-First Harness</h4>
+          <ul>
+            <li>same MQTT contracts as hardware</li>
+            <li class="dim">server can't tell the difference</li>
+            <li>scripted scenario runner in CI</li>
+            <li class="dim">swap sim adapter → MAVLink to go live</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="chips rv">
+        <span class="chip">TypeScript</span><span class="chip">Python</span><span class="chip">MQTT</span>
+        <span class="chip">React</span><span class="chip">Docker Compose</span><span class="chip">event-sourced audit log</span>
+      </div>
+      <p class="note rv">What the fleet is for stays quiet for now — this one may become a company. Happy to go deep on the engineering in person.</p>
+    </div>
+  </section>
+
+  <!-- GOLF SIMULATOR -->
+  <section class="proj alt" id="golf-sim">
+    <span class="num">06</span>
+    <div class="wrap">
+      <p class="status rv"><span class="dot b"></span>golf-sim — CV launch monitor + UE5 renderer · in development</p>
+      <h2 class="rv">Golf<br>Simulator</h2>
+      <p class="lede rv">A camera-based golf launch monitor built from scratch — high-speed stereo vision measures the shot, an Unreal Engine 5 world flies it. Both ends of the pipe, one wire contract.</p>
+      <p class="body rv">The Python/OpenCV backend runs 2–3 high-speed cameras (120–1000 fps) through a ten-phase pipeline — detection, 2D Kalman tracking, chessboard calibration, sub-frame clock sync, stereo triangulation, 3D tracking, launch-event extraction, least-squares spin estimation — chasing TrackMan-class accuracy. Each shot leaves as versioned JSON over WebSocket into an Unreal Engine 5 frontend that computes ball flight analytically at 120 Hz — gravity, drag, Magnus, deterministic and automation-tested, no engine physics — and renders it under Lumen. Two full audit passes closed; all twelve test modules green.</p>
+      <div class="flow rv">
+        <span class="node">high-speed cameras<small>2–3 rigs · 120–1000 fps</small></span><span class="arr">→</span>
+        <span class="node">detect + track<small>blob detection · Kalman 2D</small></span><span class="arr">→</span>
+        <span class="node">sync + triangulate<small>sub-frame offset · stereo pair</small></span><span class="arr">→</span>
+        <span class="node">launch + spin<small>velocity fit · Magnus least-squares</small></span><span class="arr">→</span>
+        <span class="node">ws://…/shot<small>versioned wire schema · JSON</small></span><span class="arr">→</span>
+        <span class="node">UE5 ball flight<small>analytic 120 Hz · Lumen</small></span>
+      </div>
+      <div class="chips rv">
+        <span class="chip">Python</span><span class="chip">OpenCV</span><span class="chip">Kalman filters</span>
+        <span class="chip">Unreal Engine 5</span><span class="chip">C++</span><span class="chip">WebSockets</span>
+        <span class="chip"><b>10</b>&nbsp;pipeline phases</span><span class="chip"><b>120</b>&nbsp;Hz sim tick</span>
+      </div>
+      <p class="note rv">Detection and tracking are validated on real footage; everything downstream is synthetic-validated until the two-camera rig is built. TrackMan-class is the target, not yet the claim.</p>
     </div>
   </section>
 </main>
