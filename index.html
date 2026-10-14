@@ -236,7 +236,7 @@ footer a:hover{color:var(--text)}
       <div class="stats rv stg">
         <div class="stat"><b>100+</b><span>players at charity events</span><i></i></div>
         <div class="stat"><b>16</b><span>player Ryder Cup style</span><i></i></div>
-        <div class="stat"><b>4</b><span>match play formats</span><i></i></div>
+        <div class="stat"><b>5+</b><span>configurable formats</span><i></i></div>
         <div class="stat"><b>657</b><span>commits</span><i></i></div>
       </div>
     </div>
@@ -254,7 +254,7 @@ footer a:hover{color:var(--text)}
         <div class="reel-bar" aria-hidden="true"><i></i></div>
       </div>
     </div>
-    <div class="wrap"><p class="note rv">Formats are set per event. The screens here show whichever format was running when they were captured: match play and four-team net stroke play.</p></div>
+    <div class="wrap"><p class="note rv">The screens here show Ryder Cup match play and four-team net stroke play.</p></div>
 
     <div class="wrap">
       <div class="copy">
@@ -508,11 +508,11 @@ footer a:hover{color:var(--text)}
     /* sort around the centre so a morph sweeps instead of scrambling */
     function byAngle(pts){return pts.sort(function(a,b){return Math.atan2(a[1],a[0])-Math.atan2(b[1],b[0]);});}
     /* spread N points evenly along the strokes of a line drawing */
-    function trace(lines,seed){
-      var segs=[],L=0,r=rnd(seed),out=[];
+    function trace(lines,seed,n){
+      var segs=[],L=0,r=rnd(seed),out=[];n=n||N;
       lines.forEach(function(pl){for(var i=1;i<pl.length;i++){var a=pl[i-1],b=pl[i],l=Math.hypot(b[0]-a[0],b[1]-a[1]);segs.push([a,b,l,L]);L+=l;}});
-      for(var i=0,k=0;i<N;i++){
-        var d=(i+r()*.6)/N*L;
+      for(var i=0,k=0;i<n;i++){
+        var d=(i+r()*.6)/n*L;
         while(k<segs.length-1&&segs[k][3]+segs[k][2]<d)k++;
         var s=segs[k],t=s[2]?(d-s[3])/s[2]:0;
         out.push([s[0][0]+(s[1][0]-s[0][0])*t+(r()-.5)*.03,s[0][1]+(s[1][1]-s[0][1])*t+(r()-.5)*.03]);
@@ -533,14 +533,28 @@ footer a:hover{color:var(--text)}
     /* jarvis: orchestrator hub, seven stage agents, the pipeline ring */
     var jarvis=[ell(0,0,.2,.2,28),ell(0,0,.78,.78,64)];
     for(var i=0;i<7;i++){var a=-Math.PI/2+i*Math.PI*2/7,c=Math.cos(a),s=Math.sin(a);jarvis.push(ell(c*.78,s*.78,.085,.085,14),[[c*.2,s*.2],[c*.695,s*.695]]);}
-    /* drone: quad frame from above */
-    var drone=[box(-.16,-.16,.16,.16)];
-    [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(function(q){drone.push([[q[0]*.16,q[1]*.16],[q[0]*.38,q[1]*.38]],ell(q[0]*.56,q[1]*.56,.27,.27,30),ell(q[0]*.56,q[1]*.56,.04,.04,8));});
+    /* drones: three quads seen from the front and a little above, staggered in height and depth.
+       Each point keeps its drone and its spot on it; scrolling the section moves the camera through them. */
+    var quad=[box(-.14,-.07,.14,.08),
+      [[-.12,-.05],[-.36,-.22]],[[.12,-.05],[.36,-.22]],[[-.14,.03],[-.56,.02]],[[.14,.03],[.56,.02]],
+      ell(-.36,-.24,.19,.055,22),ell(.36,-.24,.19,.055,22),ell(-.56,0,.24,.07,24),ell(.56,0,.24,.07,24)];
+    var fleet=[[-.5,-.6,2.3,.24],[.62,-.2,1.7,.32],[-.3,.5,1.25,.44]],dpts=[]; /* screen x, y, depth, share of points */
+    fleet.forEach(function(f,k){
+      var n=k<fleet.length-1?Math.round(N*f[3]):N-dpts.length;
+      trace(quad,29+k,n).forEach(function(p){dpts.push([p[0]*1.5,p[1]*1.5,k]);});
+    });
+    if(innerWidth<700)fleet.forEach(function(f){f[0]*=.72;}); /* keep the outer rotors on a phone screen */
+    function droneAt(q){
+      var dz=(q-.5)*1.7;
+      return dpts.map(function(p){var f=fleet[p[2]],z=Math.max(f[2]-dz,.4);return [(f[0]*f[2]+p[0])/z,(f[1]*f[2]+p[1])/z];});
+    }
+    var still=droneAt(.5),dord=still.map(function(p,i){return i;}).sort(function(a,b){return Math.atan2(still[a][1],still[a][0])-Math.atan2(still[b][1],still[b][0]);});
+    dpts=dord.map(function(i){return dpts[i];});
     /* golf sim: two cameras sighting the ball, then its flight */
     var rig=[box(-.98,-.78,-.66,-.56),box(.66,-.78,.98,-.56),
       [[-.66,-.62],[-.05,.47]],[[-.7,-.56],[.02,.5]],[[.66,-.62],[.05,.47]],[[.7,-.56],[-.02,.5]],
       ell(0,.49,.06,.06,14),[[-1,.56],[1,.56]],curve(.06,.45,.45,-1.2,1,-.35,24)];
-    var shapes=[field(7),trace(golf,11),trace(scoper,13),trace(jarvis,17),trace(drone,19),trace(rig,23)];
+    var shapes=[field(7),trace(golf,11),trace(scoper,13),trace(jarvis,17),droneAt(.5),trace(rig,23)];
     var cur=shapes[0].map(function(p){return p.slice();}),tgt=shapes[0],alpha=1,aT=1,run=false;
 
     function size(){
@@ -576,9 +590,10 @@ footer a:hover{color:var(--text)}
       draw();
       if(m>.0003||Math.abs(aT-alpha)>.003)requestAnimationFrame(tick);else run=false;
     }
-    /* s: 0 = hero, 1..5 = sections; fractional values blend neighbouring shapes */
-    function to(s){
+    /* s: 0 = hero, 1..5 = sections; fractional values blend neighbouring shapes. q: progress through the drones section */
+    function to(s,q){
       if(rm)s=Math.round(s);
+      else if(q!=null)shapes[4]=droneAt(q);
       var i=Math.floor(s),f=s-i,A=shapes[i],B=shapes[Math.min(i+1,shapes.length-1)];
       tgt=A.map(function(p,j){return [p[0]+(B[j][0]-p[0])*f,p[1]+(B[j][1]-p[1])*f];});
       aT=s<1?1-s*.5:.5;
@@ -641,7 +656,7 @@ footer a:hover{color:var(--text)}
       var b=rects[k].bottom;
       if(Math.abs(c-b)<w){var t=(c-b+w)/(2*w);s=k+t*t*(3-2*t);break;}
     }
-    if(stars)stars.to(s);
+    if(stars)stars.to(s,clamp((c-rects[4].top)/rects[4].height));
     var on=Math.round(s)-1;
     navl.forEach(function(a,i){a.classList.toggle('on',i===on);});
 
