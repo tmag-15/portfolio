@@ -38,10 +38,12 @@ header,main,footer{position:relative;z-index:1}
 .nav .links a:hover,.nav .right a:hover{color:var(--text)}
 .nav .links a.on{color:var(--text)}
 .nav .right{margin-left:auto;display:flex;align-items:center;gap:2px;font-size:15px}
+.nav .right a{white-space:nowrap}
 .nav .right a.solid{background:var(--text);color:#000;font-weight:500;margin-left:6px}
 .nav .right a.solid:hover{background:#E4E4E7;color:#000}
 @media(max-width:940px){.nav .links{display:none}}
-@media(max-width:520px){.nav{height:56px;padding:0 8px 0 14px}.brand{font-size:15.5px}.nav .right .lnk{display:none}}
+@media(max-width:520px){.nav{height:56px;gap:8px;padding:0 8px 0 14px}.brand{font-size:15.5px;gap:8px}.nav .right{font-size:14px}.nav .right a{padding:6px 8px}.nav .right .lnk{display:none}}
+@media(max-width:374px){.brand svg{display:none}}
 
 /* ── buttons ── */
 .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;border-radius:10px;font-size:15px;font-weight:500;
@@ -125,7 +127,7 @@ h2{margin-top:16px;font-weight:600;font-size:clamp(34px,5vw,56px);line-height:1.
 .reel .pin{position:relative}
 .phones{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;
   --pad:max(24px,calc((100% - 1060px)/2 + 24px));padding:0 var(--pad) 14px;scroll-padding-inline:var(--pad)}
-.phone{margin:0;min-width:0;flex:0 0 clamp(150px,44vw,210px);scroll-snap-align:start}
+.phone{margin:0;min-width:0;flex:0 0 clamp(150px,40vw,210px);scroll-snap-align:start}
 .phone img,.phone video{display:block;width:100%;height:auto;aspect-ratio:1170/2532;object-fit:cover;border-radius:26px;border:1px solid var(--line2);background:var(--solid)}
 .phone figcaption{margin-top:12px;font-size:13px;color:var(--muted);text-align:center}
 @media(max-width:680px){.phones{gap:14px}}
@@ -145,26 +147,20 @@ h2{margin-top:16px;font-weight:600;font-size:clamp(34px,5vw,56px);line-height:1.
   .sd .stage .shot{width:min(100%,calc((100vh - 130px) * var(--ar)))}
 }
 
-/* pinned reel: vertical scroll drives the phones sideways */
-.sd .reel .pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
-.sd .phones{overflow:visible;scroll-snap-type:none;width:max-content;min-width:100%;padding-top:40px;padding-bottom:0;will-change:transform}
-.sd .phone{flex-basis:min(260px,56vw,calc((100svh - 220px) * .4621));transform-origin:50% 60%}
-.sd .reel-bar{display:block;position:relative;width:min(1012px,calc(100% - 48px));height:2px;margin:28px auto 0;border-radius:2px;background:var(--line2)}
+/* pinned reel (wide screens): vertical scroll drives the phones sideways; phones keep the native swipe row */
+.sd .reel-bar{display:block;position:relative;width:min(1012px,calc(100% - 48px));height:2px;margin:14px auto 0;border-radius:2px;background:var(--line2)}
+@media(min-width:760px){
+  /* the pin is only as tall as its content and sticks centred (top set in JS), so the reel ends when the last phone lands */
+  .sd .reel .pin{position:sticky;top:0;overflow:hidden;padding:12px 0 8px}
+  .sd .phones{overflow:visible;scroll-snap-type:none;width:max-content;min-width:100%;padding-top:24px;padding-bottom:0;will-change:transform}
+  .sd .phone{flex-basis:min(260px,calc((100svh - 220px) * .4621));transform-origin:50% 60%}
+  .sd .reel-bar{margin-top:28px}
+}
 .reel-bar i{position:absolute;inset:0;border-radius:inherit;background:var(--text);transform:scaleX(var(--p,0));transform-origin:0 50%}
 .sd .flow .node,.sd .flow .arr{transition:opacity .62s cubic-bezier(.2,.6,.2,1),transform .62s cubic-bezier(.2,.6,.2,1),border-color .45s,background .45s,color .45s}
 
-/* ── floating contact bar ── */
-.cta-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:50;width:max-content;max-width:calc(100% - 32px);
-  display:flex;align-items:center;gap:18px;padding:10px 10px 10px 22px;border:1px solid var(--line2);border-radius:16px;
-  background:rgba(12,12,14,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-size:15px;color:#E4E4E7}
-.cta-bar[hidden]{display:none}
-.cta-bar .short{display:none}
-.cta-bar .x{width:32px;height:32px;border:0;border-radius:8px;background:none;color:var(--sub);font:inherit;font-size:18px;line-height:1;cursor:pointer}
-.cta-bar .x:hover{color:var(--text);background:var(--line)}
-@media(max-width:560px){.cta-bar{gap:10px;padding:8px 6px 8px 14px;font-size:13px;width:calc(100% - 24px);bottom:12px}.cta-bar p{flex:1;line-height:1.35}.cta-bar .long{display:none}.cta-bar .short{display:inline}}
-
 /* footer */
-footer{padding:64px 0 130px;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+footer{padding:64px 0;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
 footer a{color:var(--sub);transition:color .2s}
 footer a:hover{color:var(--text)}
@@ -210,7 +206,8 @@ footer a:hover{color:var(--text)}
   </div>
   <div class="right">
     <a class="lnk" href="https://www.linkedin.com/in/tylermagarelli" target="_blank" rel="noopener">LinkedIn</a>
-    <a class="solid" href="TylerMagarelli_Resume.pdf" target="_blank" rel="noopener">Resume</a>
+    <a href="TylerMagarelli_Resume.pdf" target="_blank" rel="noopener">Resume</a>
+    <a class="solid" href="mailto:tylermagarelli@gmail.com">Get in touch</a>
   </div>
 </nav>
 
@@ -453,12 +450,6 @@ footer a:hover{color:var(--text)}
   </div>
 </footer>
 
-<aside class="cta-bar" aria-label="Contact">
-  <p><span class="long">Open to AI engineering roles and freelance automation work.</span><span class="short">Open to AI roles and freelance work.</span></p>
-  <a class="btn sm" href="mailto:tylermagarelli@gmail.com">Get in touch</a>
-  <button class="x" type="button" aria-label="Dismiss">×</button>
-</aside>
-
 <script>
 (function(){
   var rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -605,17 +596,31 @@ footer a:hover{color:var(--text)}
       zooms=all('[data-sd=zoom]'),flows=all('[data-sd=flow]'),
       reels=all('[data-sd=reel]').map(function(el){
         var t=el.querySelector('.phones');
-        if(sd)t.removeAttribute('tabindex'); /* not a scroller once pinned */
-        return {el:el,pin:el.querySelector('.pin'),track:t,phones:[].slice.call(t.children),bar:el.querySelector('.reel-bar'),span:0,cx:[]};
-      });
+        var r={el:el,pin:el.querySelector('.pin'),track:t,phones:[].slice.call(t.children),bar:el.querySelector('.reel-bar'),span:0,top:0,cx:[]};
+        /* phones swipe natively; the bar tracks the swipe */
+        t.addEventListener('scroll',function(){
+          if(!pinned){var m=t.scrollWidth-t.clientWidth;r.bar.style.setProperty('--p',(m>0?clamp(t.scrollLeft/m):0).toFixed(4));}
+        },{passive:true});
+        return r;
+      }),
+      wide=matchMedia('(min-width:760px)'),pinned=false;
 
   /* reel height = pinned viewport + the track's sideways overflow, so 1px down moves the phones 1px across */
   function measure(){
-    if(!sd)return;
+    pinned=sd&&wide.matches;
     reels.forEach(function(r){
       r.track.style.transform='';
+      if(!pinned){
+        r.el.style.height='';r.pin.style.top='';r.track.setAttribute('tabindex','0');
+        r.phones.forEach(function(ph){ph.style.transform='';ph.style.opacity='';});
+        return;
+      }
+      r.track.removeAttribute('tabindex'); /* not a scroller once pinned */
+      var h=r.pin.offsetHeight;
+      r.top=Math.max((innerHeight-h)/2,0);
+      r.pin.style.top=r.top+'px';
       r.span=Math.max(r.track.scrollWidth-r.pin.clientWidth,0);
-      r.el.style.height=(r.pin.offsetHeight+r.span)+'px';
+      r.el.style.height=(h+r.span)+'px';
       r.cx=r.phones.map(function(p){return p.offsetLeft+p.offsetWidth/2;});
     });
   }
@@ -654,10 +659,10 @@ footer a:hover{color:var(--text)}
           kids=el.children,lit=p*(kids.length+1);
       for(var i=0;i<kids.length;i++)kids[i].classList.toggle('on',i<lit-.5);
     });
-    reels.forEach(function(rl){
+    if(pinned)reels.forEach(function(rl){
       var r=rl.el.getBoundingClientRect();
       if(r.bottom<0||r.top>vh)return;
-      var p=rl.span?clamp(-r.top/rl.span):0,x=p*rl.span,mid=rl.pin.clientWidth/2;
+      var p=rl.span?clamp((rl.top-r.top)/rl.span):0,x=p*rl.span,mid=rl.pin.clientWidth/2;
       rl.track.style.transform='translate3d('+(-x)+'px,0,0)';
       rl.bar.style.setProperty('--p',p.toFixed(4));
       /* the phone nearest the centre sits forward; the rest ease back */
@@ -692,13 +697,6 @@ footer a:hover{color:var(--text)}
     vids.forEach(function(v){vo.observe(v);});
   }
 
-  /* contact bar: dismissible for the rest of the visit */
-  var cta=document.querySelector('.cta-bar');
-  try{if(sessionStorage.getItem('cta-x'))cta.hidden=true;}catch(e){}
-  cta.querySelector('.x').addEventListener('click',function(){
-    cta.hidden=true;
-    try{sessionStorage.setItem('cta-x','1');}catch(e){}
-  });
 })();
 </script>
 </body>
