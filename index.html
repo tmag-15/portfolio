@@ -229,14 +229,14 @@ footer a:hover{color:var(--text)}
   <section class="proj" id="golf-scoring">
     <div class="wrap">
       <div class="head">
-        <p class="status rv"><span class="dot g"></span>live-golf-scoring — shipped PWA · in real-event use</p>
+        <p class="status rv"><span class="dot g"></span>live-golf-scoring — shipped PWA · used at charity events and friendly tournaments</p>
         <h2 class="rv">Live Golf Scoring</h2>
-        <p class="lede rv">A real-time tournament scoring PWA — run for a 16-player Ryder Cup–style tournament and for live score tracking at a charity event of close to 100 players. It now runs two event formats.</p>
+        <p class="lede rv">A real-time tournament scoring PWA with customizable event formats — used for live scoring at charity events of 100+ players and at friendly tournaments like a 16-player Ryder Cup–style event.</p>
       </div>
       <div class="stats rv stg">
+        <div class="stat"><b>100+</b><span>players at charity events</span><i></i></div>
         <div class="stat"><b>16</b><span>player Ryder Cup style</span><i></i></div>
-        <div class="stat"><b>~100</b><span>player charity event</span><i></i></div>
-        <div class="stat"><b>2</b><span>event formats</span><i></i></div>
+        <div class="stat"><b>4</b><span>match play formats</span><i></i></div>
         <div class="stat"><b>657</b><span>commits</span><i></i></div>
       </div>
     </div>
@@ -254,11 +254,12 @@ footer a:hover{color:var(--text)}
         <div class="reel-bar" aria-hidden="true"><i></i></div>
       </div>
     </div>
+    <div class="wrap"><p class="note rv">Formats are set per event. The screens here show whichever format was running when they were captured: match play and four-team net stroke play.</p></div>
 
     <div class="wrap">
       <div class="copy">
         <p class="rv">A split-collection Firestore architecture — ten collection paths recombined by a single selector, atomic batched writes, optimistic updates — keeps every phone on every fairway consistent in real time. Match play covers four match formats with dormie, all-square, and concession states, USGA handicap allocation, and a Monte Carlo model for live win probabilities.</p>
-        <p class="rv">The second format is four-team net stroke play: the best three of four nets count on every hole, one marker enters scores for the whole group, tournament skins carry the pot over on ties, and the individual leaderboard switches between net and gross. Score saves queue while offline and merge field by field when signal comes back, and the header says "Synced" only after Firestore confirms the write.</p>
+        <p class="rv">Stroke play runs as four-team net scoring: the best three of four nets count on every hole, one marker enters scores for the whole group, tournament skins carry the pot over on ties, and the individual leaderboard switches between net and gross. Score saves queue while offline and merge field by field when signal comes back, and the header says "Synced" only after Firestore confirms the write.</p>
       </div>
       <div class="chips rv stg">
         <span class="chip">React 19</span><span class="chip">Vite</span><span class="chip">Firestore</span>
